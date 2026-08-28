@@ -150,7 +150,7 @@
   margin-top: -8px;
   border: none;
   border-radius: var(--r-full);
-  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   box-shadow: var(--shadow-1);
 }
 
@@ -159,7 +159,7 @@
   height: 22px;
   border: none;
   border-radius: var(--r-full);
-  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
 }
 
 /* ───────────────────────────── settings page ───────────────────────────── */

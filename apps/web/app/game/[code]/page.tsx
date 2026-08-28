@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { LeaveIcon, SoundOffIcon, SoundOnIcon } from '@/components/icons';
 import { useAuth } from '@/components/AuthProvider';
 import { useGame } from '@/components/GameProvider';
 import { BoxBoard } from '@/components/game/BoxBoard';
@@ -80,7 +81,7 @@ export default function GamePage() {
             aria-label={sound ? 'Mute sound' : 'Unmute sound'}
             onClick={() => setSound(sfx.toggle())}
           >
-            {sound ? '🔊' : '🔇'}
+            {sound ? <SoundOnIcon /> : <SoundOffIcon />}
           </button>
           <button
             type="button"
@@ -91,7 +92,7 @@ export default function GamePage() {
               router.replace('/');
             }}
           >
-            ✕
+            <LeaveIcon />
           </button>
         </div>
       </div>

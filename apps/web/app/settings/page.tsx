@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { GameSettings } from '@/components/GameSettings';
+import { ThemePicker } from '@/components/ThemePicker';
 import { Button, Loading, Panel } from '@/components/ui';
 import { loadPreferences, savePreferences, DEFAULT_PREFERENCES, type Preferences } from '@/lib/settings';
 import { sfx } from '@/lib/sfx';
@@ -46,6 +47,14 @@ export default function SettingsPage() {
         <p className={styles.settingsNote}>
           Both players share one board content type, so whoever creates the room chooses it. Joining
           a game uses that host&apos;s setup, not yours.
+        </p>
+      </Panel>
+
+      <Panel title="Colour theme">
+        <ThemePicker />
+        <p className={styles.settingsNote}>
+          Applies to this browser only. Your opponent sees whichever theme they picked, so two
+          players can be on different skins in the same match.
         </p>
       </Panel>
 

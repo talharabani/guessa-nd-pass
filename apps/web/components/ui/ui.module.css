@@ -1,11 +1,36 @@
 /* Shared primitives. Tokens only — no literal colours. */
 
 .panel {
+  position: relative;
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-2);
   padding: 20px;
+  animation: rise var(--t-slow) var(--ease) both;
+}
+
+/*
+ * A one-pixel highlight along the top edge. It is what stops a flat panel from
+ * looking like a rectangle of slightly different grey — the card reads as
+ * catching light from above, which is where every shadow in the app implies it
+ * is coming from.
+ */
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  border-radius: var(--r-full);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    transparent
+  );
+  pointer-events: none;
 }
 
 .panelTitle {
@@ -47,20 +72,52 @@
 
 .btn:hover:not(:disabled) {
   filter: brightness(1.12);
+  transform: translateY(-1px);
 }
 .btn:active:not(:disabled) {
-  transform: translateY(2px) scale(0.99);
+  transform: translateY(2px) scale(0.98);
+  /* Snappier on the way down than on the way up — a press should feel
+     instant, a release can settle. */
+  transition-duration: 60ms;
 }
 .btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
+/* Gloss sweep, primary buttons only — the one control per screen worth
+   drawing the eye to. */
+.primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, #fff 34%, transparent),
+    transparent
+  );
+  opacity: 0;
+  transform: translateX(-140%) skewX(-18deg);
+  pointer-events: none;
+}
+
+.primary:hover:not(:disabled)::after {
+  opacity: 1;
+  animation: sheen 720ms var(--ease);
+}
+
 .primary {
-  --btn-bg: linear-gradient(180deg, var(--accent), #4b6ae0);
+  --btn-bg: linear-gradient(180deg, var(--accent), var(--accent-deep));
   --btn-fg: var(--accent-ink);
   border-color: transparent;
-  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  box-shadow:
+    var(--shadow-2),
+    0 6px 20px var(--glow-accent);
 }
 
 .ghost {
@@ -140,12 +197,12 @@
 .progressFill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--box), #f59e0b);
+  background: linear-gradient(90deg, var(--box-deep), var(--box));
   transition: width var(--t-mid) var(--ease);
 }
 
 .progressFill[data-tone='accent'] {
-  background: linear-gradient(90deg, var(--accent), #8ea6ff);
+  background: linear-gradient(90deg, var(--accent), var(--accent-lift));
 }
 
 /* ─────────────────────────────── modal ────────────────────────────────── */
@@ -157,7 +214,7 @@
   display: grid;
   place-items: center;
   padding: var(--gutter);
-  background: rgba(6, 9, 17, 0.82);
+  background: var(--scrim);
   backdrop-filter: blur(6px);
 }
 

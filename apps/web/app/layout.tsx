@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk } from 'next/font/google';
 import { AuthProvider } from '@/components/AuthProvider';
 import { GameProvider } from '@/components/GameProvider';
+import { THEME_BOOT_SCRIPT } from '@/lib/theme';
 import './globals.css';
+import './themes.css';
 
 const display = Space_Grotesk({
   subsets: ['latin'],
@@ -18,6 +20,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Overwritten at runtime by applyTheme() so the browser chrome follows the
+  // chosen skin; this value is only what an un-themed first paint gets.
   themeColor: '#0b0f1a',
   width: 'device-width',
   initialScale: 1,
@@ -26,8 +30,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={display.variable}>
+    <html lang="en" className={display.variable} suppressHydrationWarning>
+      <head>
+        {/* Sets data-theme before first paint — see THEME_BOOT_SCRIPT. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body>
+        {/* Drifting background glows — purely decorative, see .aurora. */}
+        <div className="aurora" aria-hidden="true">
+          <i />
+          <i />
+        </div>
         <AuthProvider>
           <GameProvider>{children}</GameProvider>
         </AuthProvider>

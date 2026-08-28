@@ -10,16 +10,31 @@
   margin-bottom: 26px;
 }
 
+/*
+ * The wordmark carries the skin: its gradient is built from the three role
+ * colours, so switching theme visibly changes the first thing on the page.
+ * The travel is slow (9s) — fast enough to notice once, never fast enough to
+ * compete with the game.
+ */
 .logo {
   display: inline-block;
   font-size: clamp(38px, 11vw, 58px);
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
-  background: linear-gradient(180deg, var(--text), var(--accent));
+  background: linear-gradient(
+    100deg,
+    var(--text),
+    var(--accent),
+    var(--select),
+    var(--hunt),
+    var(--text)
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: shimmer 9s linear infinite;
 }
 
 .tagline {
@@ -50,7 +65,7 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   border: none;
   border-radius: var(--r-sm);
   cursor: pointer;
@@ -101,7 +116,7 @@
   height: 34px;
   font-weight: 800;
   color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   border-radius: var(--r-full);
 }
 
@@ -213,7 +228,7 @@
   font-family: var(--font-num);
   font-weight: 800;
   color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
   border-radius: var(--r-full);
 }
 
@@ -247,7 +262,7 @@
 
 .demoTilePicked {
   color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--select), #7c5cf0);
+  background: linear-gradient(180deg, var(--select), var(--select-deep));
   border-color: transparent;
 }
 
@@ -260,7 +275,7 @@
 
 .demoBoxFilled {
   border: 2px solid transparent;
-  background: linear-gradient(180deg, var(--box), #e0930b);
+  background: linear-gradient(180deg, var(--box), var(--box-deep));
 }
 
 .demoTarget {
@@ -304,15 +319,31 @@
   color: var(--text-dim);
 }
 
+/* 44px minimum: these are the two controls a player hits mid-match, one of
+   which forfeits the game if mis-tapped. */
 .iconBtn {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  color: var(--text-dim);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--r-full);
   cursor: pointer;
+  transition:
+    color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.iconBtn:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.iconBtn:active {
+  transform: scale(0.92);
 }
 
 .connecting {
@@ -502,4 +533,14 @@
 .fieldError {
   color: var(--bad);
   font-weight: 600;
+}
+
+/* ───────────────────────────── theme rail ──────────────────────────────── */
+
+.themeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
 }

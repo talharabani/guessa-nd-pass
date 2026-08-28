@@ -1,12 +1,19 @@
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════════════════════
    DESIGN TOKENS — the entire visual language lives here.
 
-   The theme reference image lands later; re-skinning means editing this block
-   (and nothing else). Components only ever reference var(--token), never a
-   literal colour, radius, shadow or font.
+   :root holds the DEFAULT skin (midnight) plus every derived value. Alternate
+   skins live in themes.css and only ever restate the small "palette" block
+   below — the derived tokens rebuild themselves from it, because a custom
+   property that references var(--accent) is resolved against whichever
+   --accent won the cascade on that element.
+
+   Components only ever reference var(--token), never a literal colour, radius,
+   shadow or font. That rule is what makes a theme switch a one-line change.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
+  /* ── palette: the only block a theme overrides ── */
+
   /* surfaces */
   --bg: #0b0f1a;
   --bg-glow-1: #1b2a4a;
@@ -24,12 +31,38 @@
 
   /* brand + roles: the three systems must never look alike */
   --accent: #6c8cff; /* primary actions */
-  --accent-ink: #0b1024;
+  --accent-ink: #0b1024; /* text ON a role colour — flips to white in light skins */
   --select: #a78bfa; /* SELECT board — "choose one for your opponent" */
   --hunt: #22d3ee; /* GUESS board — "find the number they sent" */
   --box: #fbbf24; /* YOUR BOXES — the progress you race to fill */
   --good: #4ade80;
   --bad: #fb7185;
+
+  /* scrim behind modals and the countdown */
+  --scrim: rgba(6, 9, 17, 0.84);
+
+  /* depth — restated by light skins, which need far softer shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.55);
+
+  /* ── derived: never restated by a theme ── */
+
+  /*
+   * Every gradient in the app used to pair a token with a hand-picked darker
+   * hex, which meant a new palette left half the UI on the old colours. These
+   * shades are mixed from the palette instead, so they follow it everywhere.
+   */
+  --accent-deep: color-mix(in srgb, var(--accent) 72%, #000);
+  --select-deep: color-mix(in srgb, var(--select) 72%, #000);
+  --hunt-deep: color-mix(in srgb, var(--hunt) 72%, #000);
+  --box-deep: color-mix(in srgb, var(--box) 74%, #000);
+  --good-deep: color-mix(in srgb, var(--good) 72%, #000);
+  --bad-deep: color-mix(in srgb, var(--bad) 72%, #000);
+  --accent-lift: color-mix(in srgb, var(--accent) 62%, #fff);
+
+  --glow-accent: color-mix(in srgb, var(--accent) 20%, transparent);
+  --ring: 0 0 0 2px var(--accent), 0 0 0 6px var(--glow-accent);
 
   /* type */
   --font-ui: var(--font-display), system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -41,12 +74,6 @@
   --r-lg: 22px;
   --r-full: 999px;
 
-  /* depth */
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
-  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.55);
-  --ring: 0 0 0 2px var(--accent), 0 0 0 6px rgba(108, 140, 255, 0.18);
-
   /* motion — fast enough never to delay a tap */
   --t-fast: 90ms;
   --t-mid: 180ms;
@@ -57,6 +84,19 @@
   /* layout */
   --gutter: 16px;
   --max-w: 1120px;
+}
+
+/*
+ * Recolouring the whole page instantly is jarring, so the surfaces cross-fade
+ * while the theme picker is open. Suppressed under reduced-motion below, and
+ * deliberately NOT applied to transform, so nothing in the game slows down.
+ */
+html[data-theme-shift] body,
+html[data-theme-shift] body * {
+  transition:
+    background-color var(--t-slow) var(--ease),
+    border-color var(--t-slow) var(--ease),
+    color var(--t-slow) var(--ease);
 }
 
 * {
@@ -71,6 +111,9 @@ body {
 }
 
 body {
+  position: relative;
+  /* The static wash. The drifting layer on top only adds movement, so the page
+     still looks right if that layer is suppressed. */
   background:
     radial-gradient(1000px 620px at 12% -12%, var(--bg-glow-1), transparent 62%),
     radial-gradient(900px 560px at 88% 4%, var(--bg-glow-2), transparent 58%),
@@ -83,6 +126,49 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
+}
+
+/*
+ * The background glows drift.
+ *
+ * A real fixed container rather than body::before/::after, and radial gradients
+ * rather than blurred circles. Both of those are deliberate: a large
+ * filter: blur() on a fixed, animating pseudo-element gets its own compositor
+ * layer, and Chromium intermittently fails to repaint the area above it while
+ * the page scrolls — which shows up as a hard horizontal seam across the
+ * viewport. A gradient is already soft, so the blur bought nothing.
+ */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.aurora i {
+  position: absolute;
+  display: block;
+  width: 90vmax;
+  height: 90vmax;
+  border-radius: 50%;
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.aurora i:first-child {
+  top: -46vmax;
+  left: -30vmax;
+  background: radial-gradient(circle closest-side, var(--bg-glow-1), transparent 100%);
+  animation: drift-a 26s var(--ease) infinite alternate;
+}
+
+.aurora i:last-child {
+  top: -40vmax;
+  right: -32vmax;
+  background: radial-gradient(circle closest-side, var(--bg-glow-2), transparent 100%);
+  animation: drift-b 31s var(--ease) infinite alternate;
 }
 
 button {
@@ -200,13 +286,13 @@ a {
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.42);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--pulse-color, var(--hunt)) 42%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 16px rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 16px transparent;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 
@@ -251,6 +337,76 @@ a {
   }
 }
 
+@keyframes drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(14vw, 10vh, 0) scale(1.18);
+  }
+}
+
+@keyframes drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.12);
+  }
+  to {
+    transform: translate3d(-12vw, 14vh, 0) scale(1);
+  }
+}
+
+/* board tiles dealing themselves onto the table, staggered by --i */
+@keyframes deal-in {
+  from {
+    transform: translateY(14px) scale(0.86);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* the two strokes of the wrong-guess cross, drawn one after the other */
+@keyframes stroke-in {
+  from {
+    transform: translate(-50%, -50%) rotate(var(--stroke-angle)) scaleX(0);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(var(--stroke-angle)) scaleX(1);
+  }
+}
+
+/* a light sweeping across a primary button */
+@keyframes sheen {
+  from {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(240%) skewX(-18deg);
+  }
+}
+
+/* slow hue travel across the wordmark */
+@keyframes shimmer {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -258,5 +414,12 @@ a {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Park the drifting glows where they started rather than at the end frame. */
+  .aurora i {
+    animation: none !important;
+    transform: none !important;
   }
 }

@@ -1,0 +1,167 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SKINS
+
+   Each block restates only the palette from globals.css. Everything derived —
+   gradient shades, the focus ring, glows — rebuilds itself from these values,
+   so a skin is roughly twenty declarations and touches no component.
+
+   Three rules every skin here obeys:
+     1. --select, --hunt and --box are the three game systems. They must stay
+        far enough apart in hue that no player ever confuses "choose one",
+        "find this" and "your progress".
+     2. --good and --bad must read as success and danger without relying on the
+        viewer distinguishing them from each other by hue alone; the UI always
+        pairs them with a glyph or a word.
+     3. --accent-ink is the text drawn ON a role colour. Dark skins keep it near
+        black; light skins flip it to white, or the found-tile and lock chips
+        lose their contrast.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── midnight — the original: navy, violet, cyan, amber ─────────────────── */
+[data-theme='midnight'] {
+  --bg: #0b0f1a;
+  --bg-glow-1: #1b2a4a;
+  --bg-glow-2: #241b3d;
+  --surface: #141b2d;
+  --surface-2: #1b2438;
+  --surface-3: #232e46;
+  --line: #2c3854;
+  --line-strong: #3b4a6e;
+  --text: #eef2fb;
+  --text-dim: #9aa8c7;
+  --accent: #6c8cff;
+  --accent-ink: #0b1024;
+  --select: #a78bfa;
+  --hunt: #22d3ee;
+  --box: #fbbf24;
+  --good: #4ade80;
+  --bad: #fb7185;
+  --scrim: rgba(6, 9, 17, 0.84);
+}
+
+/* ─── nebula — deep violet with a magenta primary ────────────────────────── */
+[data-theme='nebula'] {
+  --bg: #0c0718;
+  --bg-glow-1: #3b1a6b;
+  --bg-glow-2: #6b1450;
+  --surface: #17102a;
+  --surface-2: #1e1636;
+  --surface-3: #291e47;
+  --line: #362a55;
+  --line-strong: #4b3a74;
+  --text: #f4eeff;
+  --text-dim: #b0a2cf;
+  --accent: #b47cff;
+  --accent-ink: #12061f;
+  --select: #ff6ec7;
+  --hunt: #38bdf8;
+  --box: #fcd34d;
+  --good: #34d399;
+  --bad: #ff5c7a;
+  --scrim: rgba(10, 4, 22, 0.86);
+}
+
+/* ─── aurora — arctic teal, lit by a lime hunt colour ────────────────────── */
+[data-theme='aurora'] {
+  --bg: #04120f;
+  --bg-glow-1: #0c4a4a;
+  --bg-glow-2: #133a6b;
+  --surface: #0b1f1d;
+  --surface-2: #102825;
+  --surface-3: #163430;
+  --line: #1e433d;
+  --line-strong: #2b5c54;
+  --text: #e8fbf5;
+  --text-dim: #8fb5ac;
+  --accent: #2dd4bf;
+  --accent-ink: #02140f;
+  --select: #c084fc;
+  --hunt: #7dd3fc;
+  --box: #fb923c;
+  --good: #a3e635;
+  --bad: #fb7185;
+  --scrim: rgba(2, 14, 12, 0.86);
+}
+
+/* ─── ember — warm charcoal, cool turquoise boxes for contrast ───────────── */
+[data-theme='ember'] {
+  --bg: #140a09;
+  --bg-glow-1: #6b2a10;
+  --bg-glow-2: #591233;
+  --surface: #1f1210;
+  --surface-2: #281815;
+  --surface-3: #35211d;
+  --line: #452b26;
+  --line-strong: #613c34;
+  --text: #fdf0e9;
+  --text-dim: #c1a294;
+  --accent: #ff8a3d;
+  --accent-ink: #1a0a03;
+  --select: #ff5fa2;
+  --hunt: #ffd93d;
+  --box: #4ecdc4;
+  --good: #7bed9f;
+  --bad: #ff4757;
+  --scrim: rgba(18, 8, 6, 0.86);
+}
+
+/* ─── synthwave — the loud one: indigo night, neon everything ────────────── */
+[data-theme='synthwave'] {
+  --bg: #0f0620;
+  --bg-glow-1: #4c1d95;
+  --bg-glow-2: #9d174d;
+  --surface: #1a0d33;
+  --surface-2: #22123f;
+  --surface-3: #2e1a52;
+  --line: #3d2469;
+  --line-strong: #573494;
+  --text: #f6ecff;
+  --text-dim: #a992d1;
+  --accent: #00e5ff;
+  --accent-ink: #0a0418;
+  --select: #ff2e88;
+  --hunt: #b967ff;
+  --box: #fee440;
+  --good: #4ade80;
+  --bad: #ff5252;
+  --scrim: rgba(8, 3, 18, 0.88);
+}
+
+/* ─── daylight — the light skin ──────────────────────────────────────────── */
+[data-theme='daylight'] {
+  --bg: #eef1f9;
+  --bg-glow-1: #c9d8ff;
+  --bg-glow-2: #e2d3ff;
+  --surface: #ffffff;
+  --surface-2: #fbfcff;
+  --surface-3: #f1f4fc;
+  --line: #dbe2f1;
+  --line-strong: #bcc7e0;
+  --text: #111827;
+  --text-dim: #566082;
+  --text-faint: #9aa5c022;
+
+  /* Roles are darkened so they still clear 4.5:1 against white surfaces. */
+  --accent: #4f6ef7;
+  --accent-ink: #ffffff;
+  --select: #7c3aed;
+  --hunt: #0e8fa8;
+  --box: #c2740a;
+  --good: #15803d;
+  --bad: #dc2626;
+
+  --scrim: rgba(23, 30, 48, 0.55);
+
+  /* Heavy dark-mode shadows read as dirt on a light page. */
+  --shadow-1: 0 1px 2px rgba(23, 30, 48, 0.08);
+  --shadow-2: 0 6px 20px rgba(23, 30, 48, 0.1);
+  --shadow-3: 0 18px 50px rgba(23, 30, 48, 0.16);
+}
+
+/*
+ * The drifting glows are tuned for dark surfaces. At the same opacity on a
+ * light page they turn the whole thing into a wash, so they pull back.
+ */
+[data-theme='daylight'] .aurora i {
+  opacity: 0.75;
+}

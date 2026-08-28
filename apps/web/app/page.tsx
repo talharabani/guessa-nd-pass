@@ -7,6 +7,7 @@ import { AccountBar } from '@/components/AccountBar';
 import { useAuth } from '@/components/AuthProvider';
 import { useGame } from '@/components/GameProvider';
 import { GameSettings } from '@/components/GameSettings';
+import { ThemePicker } from '@/components/ThemePicker';
 import { Button, Field, Loading, Panel, Toast } from '@/components/ui';
 import { contentInfo } from '@/lib/content';
 import { loadPreferences, savePreferences, type Preferences } from '@/lib/settings';
@@ -128,6 +129,11 @@ export default function HomePage() {
                 {busy === 'join' ? '…' : 'Join'}
               </Button>
             </form>
+
+            <div className={styles.themeRow}>
+              <span className="tiny">Theme</span>
+              <ThemePicker variant="rail" />
+            </div>
 
             <div className={styles.homeLinks}>
               <Link href="/how-to-play">
