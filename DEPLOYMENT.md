@@ -49,7 +49,7 @@ runs `prisma migrate deploy` and applies it to an empty database. You only need
 | Setting | Value |
 | --- | --- |
 | Root directory | `apps/server` |
-| Build command | `npm install && npx prisma generate && npx prisma migrate deploy && npm run build` |
+| Build command | `npm install --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build` |
 | Start command | `npm run start` |
 | Health check path | `/health` |
 
@@ -65,6 +65,16 @@ Environment variables:
 | `FRONTEND_URL` | same as above |
 
 Do **not** set `PORT` yourself — Render injects it and the server reads it.
+
+`NODE_ENV=production` makes npm skip devDependencies, so the build command must
+say `npm install --include=dev`. TypeScript and the `@types/*` packages live in
+devDependencies and the compile fails without them:
+
+```
+error TS7016: Could not find a declaration file for module 'express'.
+```
+
+That error means the flag is missing, not that a dependency is.
 
 The server refuses to boot in production if `JWT_SECRET` is still the dev default,
 if `DATABASE_URL` is missing, or if `CORS_ORIGIN` contains `*`. That is deliberate:

@@ -10,7 +10,11 @@ services:
     plan: starter # 'free' works, but free instances sleep — bad for live sockets
     region: oregon
     rootDir: apps/server
-    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    # --include=dev is required, not optional: NODE_ENV=production below makes
+    # npm skip devDependencies, and the build needs TypeScript and the @types
+    # packages to compile. Without it the install succeeds and `tsc` then fails
+    # on every import with TS7016.
+    buildCommand: npm install --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: npm run start
     healthCheckPath: /health
     envVars:
