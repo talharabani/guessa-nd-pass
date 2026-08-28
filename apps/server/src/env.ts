@@ -48,4 +48,19 @@ if (env.NODE_ENV === 'production') {
   }
 }
 
-export const usingDatabase = Boolean(env.DATABASE_URL);
+/*
+ * Which store the process runs on.
+ *
+ * The test suite is deliberately excluded from Postgres. It registers fixed
+ * usernames ('Talha', 'codecheck', 'alpha_p1', …) and never cleans up, so
+ * pointing it at a real database means the first run passes, seeds those rows,
+ * and every run afterwards fails on 409 USERNAME_TAKEN — against the developer's
+ * own data, which the suite has no business writing to at all.
+ *
+ * Set TEST_DATABASE_URL to opt a run back into Postgres (a disposable database
+ * in CI, never a working one).
+ */
+export const databaseUrl =
+  env.NODE_ENV === 'test' ? process.env.TEST_DATABASE_URL : env.DATABASE_URL;
+
+export const usingDatabase = Boolean(databaseUrl);

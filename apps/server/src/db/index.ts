@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { env, usingDatabase } from '../env.js';
+import { databaseUrl, env, usingDatabase } from '../env.js';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Persistence boundary.
@@ -192,7 +192,7 @@ function memoryRepo(): Repository {
 
 async function prismaRepo(): Promise<Repository> {
   const { PrismaClient } = await import('@prisma/client');
-  const prisma = new PrismaClient({ datasources: { db: { url: env.DATABASE_URL } } });
+  const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
 
   return {
     kind: 'postgres',
