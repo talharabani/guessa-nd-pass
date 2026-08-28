@@ -62,19 +62,16 @@
   gap: 4px;
 }
 
+/* Miniature of the board tile, so the preview shows the real thing. */
 .sampleTile {
-  display: grid;
-  place-items: center;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 4px;
-  font-family: var(--font-num);
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--text);
-  background: var(--surface-3);
-  border-radius: 6px;
+  composes: tile-face from global;
+  --tile-depth: 3px;
+  --tile-radius: 8px;
+  min-width: 28px;
+  height: 28px;
+  margin-bottom: 3px;
+  padding: 0 5px;
+  font-size: 15px;
 }
 
 .choiceOn .sampleTile {

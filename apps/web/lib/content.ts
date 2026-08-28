@@ -20,15 +20,18 @@ export const contentInfo = (type: ContentType) =>
 /**
  * Tile text sizing. A symbol needs more room than 'K', and '42' needs less than
  * either, so the board would look ragged with one fixed size.
+ *
+ * Sized to fill the tile face the way a moulded letter tile does — a glyph
+ * floating in the middle of a large blank cap reads as a placeholder.
  */
 export function tileScale(type: ContentType): string {
   switch (type) {
     case 'SYMBOLS':
-      return 'clamp(22px, 6.5vw, 32px)';
+      return 'clamp(26px, 7.5vw, 40px)';
     case 'LETTERS':
-      return 'clamp(20px, 5.5vw, 30px)';
+      return 'clamp(26px, 7vw, 38px)';
     default:
-      return 'clamp(18px, 5vw, 26px)';
+      return 'clamp(22px, 6vw, 34px)';
   }
 }
 

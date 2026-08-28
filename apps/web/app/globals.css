@@ -60,13 +60,36 @@
   --good-deep: color-mix(in srgb, var(--good) 72%, #000);
   --bad-deep: color-mix(in srgb, var(--bad) 72%, #000);
   --accent-lift: color-mix(in srgb, var(--accent) 62%, #fff);
+  /*
+   * Box fills gradient towards WHITE, not black.
+   *
+   * A light skin needs --box dark enough to read as text on white, and mixing
+   * a already-dark amber with black for the gradient's far stop turned every
+   * filled box muddy brown. Lifting instead keeps the fill vivid whatever the
+   * skin picked.
+   */
+  --box-lift: color-mix(in srgb, var(--box) 68%, #fff);
 
   --glow-accent: color-mix(in srgb, var(--accent) 20%, transparent);
   --ring: 0 0 0 2px var(--accent), 0 0 0 6px var(--glow-accent);
 
   /* type */
   --font-ui: var(--font-display), system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-num: var(--font-display), 'SF Mono', ui-monospace, monospace;
+  /* Glyphs on tiles and the target readout — rounded and heavy, see layout.tsx. */
+  --font-num: var(--font-tile), var(--font-display), ui-rounded, system-ui, sans-serif;
+
+  /*
+   * TILE FACES
+   *
+   * The board is the toy, so tiles are moulded rather than drawn: a bright face,
+   * a solid darker edge below standing in for thickness, and a highlight along
+   * the top. --tile-edge is mixed rather than picked so it tracks whatever face
+   * colour a state or a skin hands it.
+   */
+  --tile-face: var(--accent);
+  --tile-ink: #fff;
+  --tile-depth: 6px;
+  --tile-radius: 18px;
 
   /* shape */
   --r-sm: 8px;
@@ -240,6 +263,43 @@ a {
   text-transform: uppercase;
   color: var(--text-dim);
 }
+
+/* ─────────────────────────── moulded tiles ─────────────────────────────── */
+
+/*
+ * The tile look, in one place.
+ *
+ * Global rather than a module because several components draw a tile — the
+ * board, the how-to-play demo, the content-type samples, the onboarding
+ * illustrations — and they have to be the same object. Set --tile-face on the
+ * element to recolour one; everything else follows from it.
+ */
+.tile-face {
+  --tile-edge: color-mix(in srgb, var(--tile-face) 62%, #000);
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-num);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--tile-ink);
+  background: var(--tile-face);
+  border: none;
+  border-radius: var(--tile-radius);
+  box-shadow:
+    /* the moulded edge */ 0 var(--tile-depth) 0 var(--tile-edge),
+    /* light along the top */ inset 0 2px 0 color-mix(in srgb, #fff 42%, transparent),
+    0 calc(var(--tile-depth) + 4px) 12px rgba(0, 0, 0, 0.28);
+}
+
+/* Pressing pushes the face down onto its own edge. */
+.tile-face:active:not(:disabled) {
+  transform: translateY(calc(var(--tile-depth) - 2px));
+  box-shadow:
+    0 2px 0 var(--tile-edge),
+    inset 0 2px 0 color-mix(in srgb, #fff 30%, transparent);
+}
+
 
 /* ───────────────────────────── animations ──────────────────────────────── */
 

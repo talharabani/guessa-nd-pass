@@ -10,6 +10,7 @@ import { GameSettings } from '@/components/GameSettings';
 import { ThemePicker } from '@/components/ThemePicker';
 import { Button, Field, Loading, Panel, Toast } from '@/components/ui';
 import { contentInfo } from '@/lib/content';
+import { hasSeenOnboarding } from '@/lib/onboarding';
 import { loadPreferences, savePreferences, type Preferences } from '@/lib/settings';
 import { sfx } from '@/lib/sfx';
 import styles from './pages.module.css';
@@ -29,7 +30,11 @@ export default function HomePage() {
   useEffect(() => setPrefs(loadPreferences()), []);
 
   useEffect(() => {
-    if (!loading && !user) router.replace('/login');
+    if (loading || user) return;
+    // Signed out and never been here: explain the game before asking for a
+    // username. hasSeenOnboarding() reports true on the server, so this only
+    // ever fires on the client.
+    router.replace(hasSeenOnboarding() ? '/login' : '/welcome');
   }, [loading, user, router]);
 
   if (loading || !user || !prefs) {

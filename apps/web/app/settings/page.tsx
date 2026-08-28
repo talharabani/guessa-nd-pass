@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { GameSettings } from '@/components/GameSettings';
 import { ThemePicker } from '@/components/ThemePicker';
 import { Button, Loading, Panel } from '@/components/ui';
+import { resetOnboarding } from '@/lib/onboarding';
 import { loadPreferences, savePreferences, DEFAULT_PREFERENCES, type Preferences } from '@/lib/settings';
 import { sfx } from '@/lib/sfx';
 import settingsStyles from '@/components/settings.module.css';
@@ -15,6 +17,7 @@ import styles from '../pages.module.css';
  * Saved to this browser only — the server never reads any of it.
  */
 export default function SettingsPage() {
+  const router = useRouter();
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [sound, setSound] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -80,6 +83,16 @@ export default function SettingsPage() {
       </Panel>
 
       <div className="stack">
+        <Button
+          variant="ghost"
+          onClick={() => {
+            sfx.tap();
+            resetOnboarding();
+            router.push('/welcome');
+          }}
+        >
+          Watch the intro again
+        </Button>
         <Button
           variant="ghost"
           onClick={() => {

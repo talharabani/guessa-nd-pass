@@ -197,7 +197,7 @@
 .progressFill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--box-deep), var(--box));
+  background: linear-gradient(90deg, var(--box), var(--box-lift));
   transition: width var(--t-mid) var(--ease);
 }
 

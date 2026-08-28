@@ -1,0 +1,285 @@
+/* The first-run intro. Tokens only — it runs in whatever skin is stored. */
+
+.screen {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+  min-height: 100dvh;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top)) var(--gutter)
+    calc(20px + env(safe-area-inset-bottom));
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wordmark {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(100deg, var(--text), var(--accent), var(--select), var(--text));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 9s linear infinite;
+}
+
+.skip {
+  /* 44px target without a 44px-looking button. */
+  padding: 12px 14px;
+  margin: -12px -14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.skip:hover {
+  color: var(--text);
+}
+
+/* ──────────────────────────────── card ─────────────────────────────────── */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  animation: rise var(--t-slow) var(--ease) both;
+}
+
+.title {
+  margin-top: 26px;
+  font-size: clamp(26px, 7vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.body {
+  max-width: 34ch;
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* ──────────────────────────── illustrations ────────────────────────────── */
+
+.art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-height: 190px;
+  justify-content: center;
+}
+
+.artRow {
+  display: flex;
+  gap: 12px;
+}
+
+/* Same object as the board tile, one size down. */
+.artTile {
+  --tile-depth: 5px;
+  --tile-radius: 16px;
+  width: 62px;
+  height: 62px;
+  margin-bottom: 5px;
+  font-size: 28px;
+}
+
+.artPicked {
+  animation: pop-in var(--t-slow) var(--ease-pop) both;
+  animation-delay: 160ms;
+}
+
+/* The tile travelling to the opponent. */
+.artArrow {
+  width: 2px;
+  height: 26px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--select), transparent);
+  position: relative;
+}
+
+.artArrow::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--select);
+  border-bottom: 2px solid var(--select);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.artTarget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 26px;
+  border-radius: var(--r-lg);
+  border: 1px solid color-mix(in srgb, var(--hunt) 45%, transparent);
+  background: color-mix(in srgb, var(--hunt) 10%, transparent);
+}
+
+.artTargetLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.artTargetValue {
+  font-family: var(--font-num);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--hunt);
+}
+
+/* The wrong-guess ✕, drawn exactly as the board draws it. */
+.artCross {
+  --tile-face: color-mix(in srgb, var(--bad) 26%, var(--surface-2));
+  /* Same treatment as the board: pushed back, still readable. */
+  --tile-ink: color-mix(in srgb, var(--text) 52%, transparent);
+}
+
+.artCross::before,
+.artCross::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56%;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--bad);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--bad) 55%, transparent);
+  transform: translate(-50%, -50%) rotate(var(--stroke-angle));
+  animation: stroke-in 170ms var(--ease) both;
+  animation-delay: 320ms;
+}
+
+.artCross::before {
+  --stroke-angle: 45deg;
+}
+
+.artCross::after {
+  --stroke-angle: -45deg;
+  animation-delay: 430ms;
+}
+
+.artBoxes {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  width: min(280px, 82vw);
+}
+
+.artBoxes i {
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  border: 1px dashed var(--line-strong);
+  background: var(--bg);
+}
+
+.artBoxes i[data-filled='true'] {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, var(--box-lift), var(--box));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--box) 55%, #000);
+  animation: pop-in var(--t-mid) var(--ease-pop) both;
+}
+
+.artCaption {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.artCaption[data-tone='bad'] {
+  color: var(--bad);
+}
+.artCaption[data-tone='good'] {
+  color: var(--good);
+}
+
+/* ─────────────────────────────── bottom ────────────────────────────────── */
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 30px;
+  height: 30px;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+/* The visible pill is small; the button around it stays finger-sized. */
+.dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--line-strong);
+  transform: translate(-50%, -50%);
+  transition:
+    width var(--t-mid) var(--ease),
+    background var(--t-mid) var(--ease);
+}
+
+.dot[data-done='true']::after {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.dot[data-on='true']::after {
+  width: 24px;
+  background: var(--accent);
+}
+
+.signIn {
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.signIn:hover {
+  color: var(--text);
+}

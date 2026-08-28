@@ -86,7 +86,7 @@
   transition: width var(--t-slow) var(--ease);
 }
 .racerFill[data-mine='true'] {
-  background: linear-gradient(90deg, var(--box-deep), var(--box));
+  background: linear-gradient(90deg, var(--box), var(--box-lift));
 }
 
 .racerRole {
@@ -285,29 +285,25 @@
 }
 
 .tile {
-  position: relative;
+  /*
+   * A moulded tile: bright face, solid edge below it, light along the top.
+   * Shape and depth come from .tile-face in globals.css; this adds the board's
+   * own sizing and interaction. --tile-face is overridden per state below.
+   */
+  composes: tile-face from global;
   aspect-ratio: 1 / 1;
   min-height: 56px;
-  display: grid;
-  place-items: center;
   padding: 0;
-  overflow: hidden;
-  font-family: var(--font-num);
   /* set per board from the content type: symbols need more room than digits */
   font-size: var(--tile-size, clamp(18px, 5vw, 26px));
-  line-height: 1;
-  font-weight: 800;
-  color: var(--text);
-  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-md);
-  box-shadow: var(--shadow-1);
+  overflow: hidden;
   cursor: pointer;
+  /* The edge is drawn as a shadow, so the tile needs the room under it. */
+  margin-bottom: var(--tile-depth);
   transition:
     transform var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease),
     box-shadow var(--t-fast) var(--ease),
-    background var(--t-fast) var(--ease);
+    background var(--t-mid) var(--ease);
 }
 
 .tileFace {
@@ -340,13 +336,13 @@
   pointer-events: none;
 }
 
+/* Lifts off its edge, which grows to match. */
 .tile:hover:not(:disabled) {
-  border-color: var(--board-accent);
   transform: translateY(-3px);
   box-shadow:
-    var(--shadow-2),
-    0 0 0 1px color-mix(in srgb, var(--board-accent) 45%, transparent),
-    0 8px 24px color-mix(in srgb, var(--board-accent) 22%, transparent);
+    0 calc(var(--tile-depth) + 3px) 0 var(--tile-edge),
+    inset 0 2px 0 color-mix(in srgb, #fff 48%, transparent),
+    0 14px 26px color-mix(in srgb, var(--board-accent) 30%, transparent);
 }
 
 .tile:hover:not(:disabled) .tileSheen {
@@ -355,7 +351,6 @@
 }
 
 .tile:active:not(:disabled) {
-  transform: translateY(1px) scale(0.95);
   transition-duration: 60ms;
 }
 .tile:disabled {
@@ -372,15 +367,24 @@
 }
 
 .tileIdle:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
-/* already used as a target this round — cannot be chosen again */
+/*
+ * Already sent as a target this round — cannot be chosen again.
+ *
+ * Drawn as an empty socket rather than a dimmed tile: no face, no edge, just
+ * the recess it would sit in. That is what makes a board of bright tiles read
+ * at a glance as "these are the ones left".
+ */
 .tileUsed {
+  --tile-face: transparent;
   color: var(--text-dim);
-  background: var(--bg);
-  border-color: var(--line);
-  opacity: 0.55;
+  background: color-mix(in srgb, #000 22%, var(--surface));
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.4),
+    0 0 0 2px color-mix(in srgb, var(--text) 22%, transparent);
+  opacity: 0.75;
 }
 
 /* Spent, not wrong: one slash, so it never reads as the two-stroke ✕ below. */
@@ -390,21 +394,21 @@
   top: 50%;
   left: 50%;
   z-index: 1;
-  width: 62%;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--line-strong);
+  width: 64%;
+  height: 3px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--text) 42%, transparent);
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 /* a number this player successfully found */
 .tileFound {
-  color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--good), var(--good-deep));
-  border-color: transparent;
+  --tile-face: var(--good);
+  --tile-ink: var(--accent-ink);
   box-shadow:
-    var(--shadow-1),
-    0 0 18px color-mix(in srgb, var(--good) 30%, transparent);
+    0 var(--tile-depth) 0 var(--tile-edge),
+    inset 0 2px 0 color-mix(in srgb, #fff 45%, transparent),
+    0 0 22px color-mix(in srgb, var(--good) 45%, transparent);
 }
 
 .tileHit {
@@ -413,7 +417,6 @@
 
 .tileMiss {
   animation: shake var(--t-slow) var(--ease);
-  border-color: var(--bad) !important;
 }
 
 /* ─────────────────── wrong guess: the ✕ ──────────────────── */
@@ -425,12 +428,8 @@
  * only reinforcement.
  */
 .tileWrong {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--bad) 16%, var(--surface-2)),
-    color-mix(in srgb, var(--bad) 8%, var(--surface))
-  );
-  border-color: color-mix(in srgb, var(--bad) 55%, transparent);
+  --tile-face: color-mix(in srgb, var(--bad) 26%, var(--surface-2));
+  --tile-ink: var(--text);
   cursor: not-allowed;
 }
 
@@ -584,7 +583,7 @@
 .meterFill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--box-deep), var(--box));
+  background: linear-gradient(90deg, var(--box), var(--box-lift));
   transition: width var(--t-slow) var(--ease);
 }
 
@@ -654,7 +653,7 @@
 
 .boxFilled {
   border: 1px solid transparent;
-  background: linear-gradient(180deg, var(--box), var(--box-deep));
+  background: linear-gradient(180deg, var(--box-lift), var(--box));
   box-shadow: var(--shadow-1);
   cursor: default;
 }

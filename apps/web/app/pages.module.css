@@ -250,20 +250,17 @@
 }
 
 .demoTile {
-  min-width: 48px;
-  padding: 10px 12px;
-  text-align: center;
-  font-family: var(--font-num);
-  font-weight: 800;
-  background: var(--surface-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-sm);
+  composes: tile-face from global;
+  --tile-depth: 4px;
+  --tile-radius: 12px;
+  min-width: 50px;
+  height: 50px;
+  margin-bottom: 4px;
+  font-size: 20px;
 }
 
 .demoTilePicked {
-  color: var(--accent-ink);
-  background: linear-gradient(180deg, var(--select), var(--select-deep));
-  border-color: transparent;
+  --tile-face: var(--select);
 }
 
 .demoBox {
@@ -275,7 +272,8 @@
 
 .demoBoxFilled {
   border: 2px solid transparent;
-  background: linear-gradient(180deg, var(--box), var(--box-deep));
+  background: linear-gradient(180deg, var(--box-lift), var(--box));
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--box) 55%, #000);
 }
 
 .demoTarget {
