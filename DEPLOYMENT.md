@@ -12,6 +12,16 @@ functions, which is why it goes to Render rather than Vercel.
 
 ---
 
+## Why the backend is not on Vercel
+
+Vercel runs serverless functions: they start per request, do not hold open
+connections, and share no memory. This game needs the opposite — a long-lived
+process holding WebSocket connections and the live match state for every room.
+Put the frontend on Vercel and the backend on Render (or Railway / Fly / any host
+that runs a persistent Node process).
+
+Deploy the **backend first**: the frontend needs its URL at build time.
+
 ## 1. Database
 
 Any managed Postgres works (Render Postgres, Neon, Supabase). You need one value:
@@ -22,15 +32,10 @@ DATABASE_URL=postgresql://user:password@host:5432/number_rush?sslmode=require
 
 Neon and Supabase both require `sslmode=require`. Render's internal URL does not.
 
-Run the schema once, from your machine:
-
-```bash
-cd apps/server
-DATABASE_URL="<your url>" npx prisma migrate dev --name init
-```
-
-That creates `prisma/migrations/`. **Commit that folder** — production runs
-`prisma migrate deploy` against it and never generates migrations itself.
+The schema migration is already committed at
+`apps/server/prisma/migrations/`, so there is nothing to generate — the deploy
+runs `prisma migrate deploy` and applies it to an empty database. You only need
+`prisma migrate dev` later, when you change `schema.prisma`.
 
 ---
 
@@ -73,14 +78,18 @@ a misconfigured deploy should fail loudly, not run insecurely.
 
 ## 3. Frontend → Vercel
 
-Vercel → New Project → import the repo:
+Vercel → **Add New… → Project** → import `talharabani/guessa-nd-pass`:
 
 | Setting | Value |
 | --- | --- |
-| Root directory | `apps/web` |
-| Framework preset | Next.js (detected) |
-| Build command | `npm run build` (default) |
-| Install command | `npm install` (default) |
+| **Root Directory** | `apps/web` ← the one setting people miss |
+| Framework preset | Next.js (auto-detected) |
+| Build command | leave default |
+| Install command | leave default |
+
+This is an npm workspace repo. Setting Root Directory to `apps/web` is what makes
+Vercel build the frontend rather than the repo root — without it the build fails
+with "No Next.js version detected".
 
 Environment variable:
 
