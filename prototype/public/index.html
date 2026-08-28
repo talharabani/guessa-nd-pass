@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GUESS &amp; PASS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="vignette"></div>
+<div id="flash" class="flash"></div>
+
+<!-- ══════════════════════════════ TITLE ══════════════════════════════ -->
+<section id="screen-title" class="screen is-active">
+  <div class="title-wrap">
+
+    <div class="crest">
+      <div class="crest-plate">
+        <span class="crest-l1">GUESS</span>
+        <span class="crest-amp">&amp;</span>
+        <span class="crest-l2">PASS</span>
+      </div>
+      <div class="crest-shadow"></div>
+    </div>
+    <p class="crest-sub">▸ A TWO&#8209;PLAYER NUMBER HUNT ◂</p>
+
+    <div class="panel panel--form">
+      <div class="field">
+        <span class="field-key">NAME</span>
+        <input id="nameInput" class="slot" maxlength="12" placeholder="HERO" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <span class="field-key">ROOM</span>
+        <input id="roomInput" class="slot" maxlength="8" placeholder="LOBBY" autocomplete="off" spellcheck="false">
+      </div>
+      <button id="joinBtn" class="plank plank--gold">PLAY</button>
+      <p class="hint">OPEN IN TWO TABS &middot; SAME ROOM CODE</p>
+    </div>
+
+    <div class="rules">
+      <div class="rules-title">HOW IT WORKS</div>
+      <ol>
+        <li>The <b>SELECTOR</b> picks a number.</li>
+        <li>The <b>SEEKER</b> hunts it on their own shuffled board.</li>
+        <li>While they hunt, the selector fills boxes — <b>one tap each</b>.</li>
+        <li>The moment it's found, boxes <b>LOCK</b> and roles flip.</li>
+        <li>First to fill all boxes wins.</li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════ GAME ═══════════════════════════════ -->
+<section id="screen-game" class="screen">
+
+  <header class="hud">
+    <div class="pcard" id="pcardMe">
+      <div class="pcard-face" id="faceMe">?</div>
+      <div class="pcard-body">
+        <div class="pcard-name" id="nameMe">YOU</div>
+        <div class="pips" id="pipsMe"></div>
+        <div class="pcard-role" id="roleMe">—</div>
+      </div>
+    </div>
+
+    <div class="hud-mid">
+      <div class="hud-room">ROOM <b id="roomTag">—</b></div>
+      <div class="hud-vs">VS</div>
+      <div class="hud-turn">TURN <b id="turnTag">0</b></div>
+    </div>
+
+    <div class="pcard pcard--foe" id="pcardFoe">
+      <div class="pcard-body">
+        <div class="pcard-name" id="nameFoe">WAITING…</div>
+        <div class="pips" id="pipsFoe"></div>
+        <div class="pcard-role" id="roleFoe">—</div>
+      </div>
+      <div class="pcard-face" id="faceFoe">?</div>
+    </div>
+  </header>
+
+  <div class="stage">
+
+    <aside class="col col--side">
+      <div class="tablet" id="tablet">
+        <div class="tablet-glow"></div>
+        <div class="tablet-label" id="targetLabel">WAITING</div>
+        <div class="tablet-num" id="targetNumber">--</div>
+        <div class="tablet-sub" id="targetSub">&nbsp;</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">YOUR BOXES</div>
+        <div id="boxes" class="boxes"></div>
+        <div id="lockbar" class="lockbar is-locked">
+          <span class="lock-ico">🔒</span><span id="lockText">LOCKED</span>
+        </div>
+        <div class="panel-note" id="boxNote">Fill only while your opponent searches.</div>
+      </div>
+    </aside>
+
+    <main class="col col--main">
+      <div class="panel panel--board">
+        <div class="panel-title" id="boardLabel">YOUR BOARD</div>
+        <div id="board" class="board"></div>
+        <div class="legend">
+          <span><i class="sw sw--gold"></i>FOUND</span>
+          <span><i class="sw sw--dead"></i>USED</span>
+          <span><i class="sw sw--wood"></i>OPEN</span>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div id="banner" class="banner"><span id="bannerText"></span></div>
+  <div id="toast" class="toast"></div>
+</section>
+
+<!-- ═════════════════════════════ RESULT ══════════════════════════════ -->
+<div id="overlay" class="overlay">
+  <div class="overlay-card">
+    <div id="overlayCrown" class="overlay-crown">★</div>
+    <div id="overlayText" class="overlay-text">—</div>
+    <div id="overlayScore" class="overlay-score">—</div>
+    <button id="restartBtn" class="plank plank--gold">PLAY AGAIN</button>
+  </div>
+</div>
+
+<button id="soundBtn" class="soundbtn" title="Sound">♪</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+</body>
+</html>

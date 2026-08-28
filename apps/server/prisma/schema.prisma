@@ -1,0 +1,100 @@
+// Number Rush — persistence.
+//
+// Live match state lives in server memory (it changes many times per second and
+// must be instant). Postgres holds the durable facts: who players are, which
+// games happened, and how they ended. Rows are written at meaningful moments —
+// game created, game finished — never per box tap.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+
+  /// As typed at sign-up — this is what other players see.
+  username String @unique
+  /// Lower-cased copy carrying the real uniqueness constraint. Sign-in matches
+  /// on this, so "Talha" and "talha" are the same account and cannot both exist.
+  usernameLower String @unique
+
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  hostedGames Game[]       @relation("HostedGames")
+  wonGames    Game[]       @relation("WonGames")
+  entries     GamePlayer[]
+
+  @@index([usernameLower])
+}
+
+/// What the boards are made of.
+enum ContentType {
+  DIGITS
+  LETTERS
+  SYMBOLS
+  MIXED
+}
+
+enum GameStatus {
+  WAITING_FOR_PLAYER
+  READY
+  COUNTDOWN
+  IN_PROGRESS
+  FINISHED
+  ABANDONED
+}
+
+model Game {
+  id        String     @id @default(cuid())
+  roomCode  String
+  status    GameStatus @default(WAITING_FOR_PLAYER)
+  boxCount    Int         @default(100)
+  boardSize   Int         @default(20)
+  contentType ContentType @default(DIGITS)
+
+  hostId   String
+  host     User   @relation("HostedGames", fields: [hostId], references: [id], onDelete: Cascade)
+  winnerId String?
+  winner   User?  @relation("WonGames", fields: [winnerId], references: [id], onDelete: SetNull)
+
+  /// Rounds played — one per number successfully found.
+  rounds Int @default(0)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  finishedAt DateTime?
+
+  players GamePlayer[]
+
+  @@index([roomCode])
+  @@index([createdAt])
+}
+
+/// One row per player per game: their seat and their final standing.
+model GamePlayer {
+  id     String @id @default(cuid())
+  gameId String
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  seat Int
+
+  /// Snapshot taken when the game ends.
+  progress        Int      @default(0)
+  tokensFound     Int      @default(0)
+  boardTokens     String[]
+  completedTokens String[]
+
+  joinedAt DateTime @default(now())
+
+  @@unique([gameId, userId])
+  @@index([userId])
+}

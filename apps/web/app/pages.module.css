@@ -1,0 +1,505 @@
+/* Page-level composition. Primitives live in components/ui. */
+
+.authCard {
+  width: 100%;
+  max-width: 400px;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.logo {
+  display: inline-block;
+  font-size: clamp(38px, 11vw, 58px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: linear-gradient(180deg, var(--text), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tagline {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.error {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent);
+  border-radius: var(--r-md);
+}
+
+.errorText {
+  margin: 0;
+}
+
+.errorAction {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.errorAction:active {
+  transform: translateY(1px);
+}
+
+.errorHint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.switch {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+/* ───────────────────────────────── home ────────────────────────────────── */
+
+.home {
+  width: 100%;
+  max-width: 460px;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-weight: 800;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  border-radius: var(--r-full);
+}
+
+.joinRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+/* ──────────────────────────────── lobby ────────────────────────────────── */
+
+.codeBlock {
+  text-align: center;
+  padding: 22px 16px;
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line-strong);
+  background: var(--bg);
+}
+
+.code {
+  font-family: var(--font-num);
+  font-size: clamp(38px, 13vw, 58px);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  color: var(--accent);
+}
+
+.seats {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.seat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.seatEmpty {
+  border-style: dashed;
+  color: var(--text-dim);
+}
+
+.seatName {
+  flex: 1;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--r-full);
+  background: var(--text-dim);
+  flex: none;
+}
+.dotReady {
+  background: var(--good);
+  box-shadow: 0 0 12px var(--good);
+}
+.dotOffline {
+  background: var(--bad);
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.statusReady {
+  color: var(--good);
+}
+
+/* ────────────────────────────── how to play ────────────────────────────── */
+
+.steps {
+  display: grid;
+  gap: 14px;
+  counter-reset: step;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.stepNum {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-family: var(--font-num);
+  font-weight: 800;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  border-radius: var(--r-full);
+}
+
+.stepTitle {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.stepBody {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.demoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.demoTile {
+  min-width: 48px;
+  padding: 10px 12px;
+  text-align: center;
+  font-family: var(--font-num);
+  font-weight: 800;
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+
+.demoTilePicked {
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--select), #7c5cf0);
+  border-color: transparent;
+}
+
+.demoBox {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  border: 2px dashed var(--line-strong);
+}
+
+.demoBoxFilled {
+  border: 2px solid transparent;
+  background: linear-gradient(180deg, var(--box), #e0930b);
+}
+
+.demoTarget {
+  margin-top: 12px;
+  padding: 14px;
+  text-align: center;
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--hunt) 45%, transparent);
+  background: color-mix(in srgb, var(--hunt) 10%, transparent);
+}
+
+.demoTargetLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.demoTargetNum {
+  font-family: var(--font-num);
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--hunt);
+}
+
+/* ───────────────────────────── game screen ─────────────────────────────── */
+
+.gameTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.roomTag {
+  font-family: var(--font-num);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+}
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  cursor: pointer;
+}
+
+.connecting {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  gap: 10px;
+  color: var(--text-dim);
+}
+
+/* ─────────────────────────── home: game setup ──────────────────────────── */
+
+.setupToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.setupToggle:hover {
+  border-color: var(--line-strong);
+}
+
+.setupLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.setupSummary {
+  display: block;
+  margin-top: 2px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.setupChevron {
+  color: var(--text-dim);
+  transition: transform var(--t-mid) var(--ease);
+}
+.setupChevron[data-open='true'] {
+  transform: rotate(180deg);
+}
+
+.setupBody {
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  animation: rise var(--t-mid) var(--ease);
+}
+
+.homeLinks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.settingsNote {
+  margin: 18px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* ──────────────────────────── lobby: mode chips ────────────────────────── */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+}
+
+.chipStrong {
+  color: var(--select);
+  border-color: color-mix(in srgb, var(--select) 45%, transparent);
+  background: color-mix(in srgb, var(--select) 10%, transparent);
+}
+
+/* ────────────────────────────── auth form ──────────────────────────────── */
+
+.fieldLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  font-size: 17px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  outline: none;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.input::placeholder {
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.inputWithButton {
+  padding-right: 52px;
+}
+
+.inputBad {
+  border-color: var(--bad);
+}
+.inputBad:focus {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 2px var(--bad), 0 0 0 6px color-mix(in srgb, var(--bad) 20%, transparent);
+}
+
+.revealBtn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.revealBtn:hover {
+  background: var(--surface-3);
+}
+
+.fieldHint,
+.fieldError {
+  margin: 6px 2px 0;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.fieldHint {
+  color: var(--text-dim);
+}
+
+.fieldError {
+  color: var(--bad);
+  font-weight: 600;
+}

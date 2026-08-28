@@ -1,0 +1,20 @@
+{
+  "name": "number-rush",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Real-time 2-player number race. Select a number, your opponent hunts it, you fill boxes while they search.",
+  "workspaces": [
+    "apps/server",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/server && npm run build --workspace=apps/web",
+    "test": "npm run test --workspace=apps/server",
+    "typecheck": "npm run --workspace=apps/server build -- --noEmit && npm run typecheck --workspace=apps/web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,756 @@
+/* ──────────────────────── HUD: the race indicator ───────────────────────── */
+
+.hud {
+  display: grid;
+  /* minmax(0, 1fr), never plain 1fr: a 1fr track refuses to shrink below its
+     content's min width, so a long username would push the card off screen. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.racer {
+  min-width: 0;
+  padding: 10px 12px 9px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition:
+    border-color var(--t-mid) var(--ease),
+    box-shadow var(--t-mid) var(--ease);
+}
+
+.racer[data-active='true'] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  box-shadow: 0 0 20px rgba(108, 140, 255, 0.16);
+}
+
+.racerTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  min-width: 0;
+}
+
+.racerName {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crown {
+  color: var(--box);
+  font-size: 12px;
+}
+
+.racerScore {
+  flex: none;
+  font-family: var(--font-num);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-dim);
+}
+.racerScore[data-mine='true'] {
+  color: var(--box);
+}
+
+.racerTotal {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.racerTrack {
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.racerFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4b6ae0, var(--accent));
+  /* Smooth, but quick enough to feel like a live race. */
+  transition: width var(--t-slow) var(--ease);
+}
+.racerFill[data-mine='true'] {
+  background: linear-gradient(90deg, #e0930b, var(--box));
+}
+
+.racerRole {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.racerRole[data-kind='hunting'] {
+  color: var(--hunt);
+}
+.racerRole[data-kind='filling'] {
+  color: var(--box);
+}
+.racerRole[data-kind='choosing'] {
+  color: var(--select);
+}
+.racerRole[data-kind='offline'] {
+  color: var(--bad);
+}
+
+.gap {
+  display: grid;
+  place-items: center;
+  padding: 0 2px;
+}
+
+.gapValue {
+  font-family: var(--font-num);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+.gapValue[data-lead='up'] {
+  color: var(--good);
+}
+.gapValue[data-lead='down'] {
+  color: var(--bad);
+}
+
+/* ───────────────────────────── target panel ────────────────────────────── */
+
+.target {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 22px 18px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  transition: border-color var(--t-mid) var(--ease);
+}
+
+.target[data-mode='hunt'] {
+  border-color: color-mix(in srgb, var(--hunt) 55%, transparent);
+  background:
+    radial-gradient(600px 200px at 50% 120%, color-mix(in srgb, var(--hunt) 16%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+
+.target[data-mode='mine'] {
+  border-color: color-mix(in srgb, var(--box) 45%, transparent);
+  background:
+    radial-gradient(600px 200px at 50% 120%, color-mix(in srgb, var(--box) 12%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+
+.target[data-mode='select'] {
+  border-color: color-mix(in srgb, var(--select) 50%, transparent);
+}
+
+.targetLabel {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.targetNumber {
+  font-family: var(--font-num);
+  font-size: var(--target-size, clamp(56px, 17vw, 92px));
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 6px 0 4px;
+}
+
+.target[data-mode='hunt'] .targetNumber {
+  color: var(--hunt);
+  text-shadow: 0 0 34px color-mix(in srgb, var(--hunt) 45%, transparent);
+}
+.target[data-mode='mine'] .targetNumber {
+  color: var(--box);
+}
+.target[data-mode='select'] .targetNumber {
+  color: var(--select);
+}
+
+.targetNumber[data-animate='true'] {
+  animation: drop-in var(--t-slow) var(--ease-pop);
+}
+
+.targetSub {
+  font-size: 14px;
+  color: var(--text-dim);
+  min-height: 21px;
+}
+
+/* ──────────────────────── the three-system layout ──────────────────────── */
+
+.stage {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .stage {
+    grid-template-columns: 340px 1fr;
+    align-items: start;
+  }
+  .sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 16px;
+  }
+}
+
+/* ───────────────────────────── number board ────────────────────────────── */
+
+.boardWrap[data-mode='select'] {
+  --board-accent: var(--select);
+}
+.boardWrap[data-mode='hunt'] {
+  --board-accent: var(--hunt);
+}
+.boardWrap[data-mode='idle'] {
+  --board-accent: var(--line-strong);
+}
+
+.boardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.boardTitle {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--board-accent);
+}
+
+.findChipLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+}
+
+.findChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-num);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--bg);
+  background: var(--hunt);
+  border-radius: var(--r-full);
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .board {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.tile {
+  aspect-ratio: 1 / 1;
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-family: var(--font-num);
+  /* set per board from the content type: symbols need more room than digits */
+  font-size: var(--tile-size, clamp(18px, 5vw, 26px));
+  line-height: 1;
+  font-weight: 800;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transition:
+    transform var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease);
+}
+
+.tile:hover:not(:disabled) {
+  border-color: var(--board-accent);
+  transform: translateY(-2px);
+}
+.tile:active:not(:disabled) {
+  transform: translateY(2px) scale(0.97);
+}
+.tile:disabled {
+  cursor: default;
+}
+
+.tileIdle:disabled {
+  opacity: 0.55;
+}
+
+/* already used as a target this round — cannot be chosen again */
+.tileUsed {
+  color: var(--text-dim);
+  background: var(--bg);
+  border-color: var(--line);
+  opacity: 0.55;
+}
+
+/* a number this player successfully found */
+.tileFound {
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--good), #22a95c);
+  border-color: transparent;
+}
+
+.tileHit {
+  animation: pop-in var(--t-slow) var(--ease-pop);
+}
+
+.tileMiss {
+  animation: shake var(--t-slow) var(--ease);
+  border-color: var(--bad) !important;
+}
+
+/* ─────────────────────────────── boxes ─────────────────────────────────── */
+
+.boxHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.boxTitle {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--box);
+}
+
+.lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--r-full);
+  border: 1px solid;
+}
+
+.lockOpen {
+  color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 50%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+}
+
+.lockShut {
+  color: var(--bad);
+  border-color: color-mix(in srgb, var(--bad) 40%, transparent);
+  background: color-mix(in srgb, var(--bad) 10%, transparent);
+}
+
+.lockSlam {
+  animation: pop-in var(--t-slow) var(--ease-pop);
+}
+
+/*
+ * 100 boxes, laid out 10x10.
+ * Individual boxes are small, and that is fine: every empty box is equivalent,
+ * so a fast sloppy tap still lands on a valid one. Precision is never required,
+ * only speed.
+ */
+.boxMeter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.boxCount {
+  font-family: var(--font-num);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--box);
+  transition: color var(--t-fast) var(--ease);
+}
+.boxCount[data-wipe='true'] {
+  color: var(--bad);
+  animation: shake var(--t-slow) var(--ease);
+}
+
+.boxCountTotal {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.meterTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.meterFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #e0930b, var(--box));
+  transition: width var(--t-slow) var(--ease);
+}
+
+.boxes {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+}
+
+/* the wrong-guess wipe: ■ → ✕ → □, rippling across the grid */
+.boxesWiping {
+  animation: wipeFlash 0.5s var(--ease);
+}
+
+@keyframes wipeFlash {
+  0%,
+  100% {
+    filter: none;
+  }
+  30% {
+    filter: brightness(1.5) saturate(1.6) hue-rotate(-38deg);
+  }
+}
+
+.boxWipe {
+  animation: boxWipe 0.42s var(--ease) both;
+}
+
+@keyframes boxWipe {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.18) rotate(8deg);
+    background: var(--bad);
+    border-color: var(--bad);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.box {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px dashed var(--line-strong);
+  background: var(--bg);
+  cursor: not-allowed;
+  transition:
+    transform var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+
+.boxOpen {
+  cursor: pointer;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--box) 60%, transparent);
+  background: color-mix(in srgb, var(--box) 10%, transparent);
+}
+
+.boxOpen:active {
+  transform: scale(0.92);
+}
+
+.boxFilled {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, var(--box), #e0930b);
+  box-shadow: var(--shadow-1);
+  cursor: default;
+}
+
+.boxPop {
+  animation: pop-in var(--t-mid) var(--ease-pop);
+}
+
+.boxCount {
+  font-family: var(--font-num);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--box);
+}
+
+.boxNote {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* ─────────────────────────── banner + countdown ────────────────────────── */
+
+.banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 28%;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  animation: sweep 1.45s var(--ease) forwards;
+}
+
+.bannerInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 13px 30px 15px;
+  font-size: clamp(16px, 4.6vw, 24px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--surface-3), var(--surface));
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-3);
+}
+
+.bannerInner[data-tone='good'] {
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--good), #1fa457);
+  border-color: transparent;
+}
+.bannerInner[data-tone='bad'] {
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bad), #b4384c);
+  border-color: transparent;
+}
+.bannerInner[data-tone='hunt'] {
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--hunt), #0e9bb5);
+  border-color: transparent;
+}
+
+.bannerText {
+  font-size: inherit;
+  line-height: 1.1;
+}
+
+.bannerSub {
+  font-family: var(--font-num);
+  font-size: 0.72em;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+/* the whole screen flinches on your own wrong guess */
+.shake {
+  animation: shake 0.42s var(--ease);
+}
+
+.countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  display: grid;
+  place-items: center;
+  background: rgba(6, 9, 17, 0.86);
+  backdrop-filter: blur(4px);
+}
+
+.countdownNum {
+  font-family: var(--font-num);
+  font-size: clamp(90px, 34vw, 190px);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+  animation: pop-in var(--t-slow) var(--ease-pop);
+}
+
+.countdownLabel {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ─────────────────────────────── winner ────────────────────────────────── */
+
+.trophy {
+  font-size: 56px;
+  line-height: 1;
+  animation: drop-in var(--t-slow) var(--ease-pop);
+}
+
+.winTitle {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 10px 0 4px;
+}
+.winTitle[data-win='true'] {
+  color: var(--good);
+}
+.winTitle[data-win='false'] {
+  color: var(--bad);
+}
+
+.finalScore {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 16px 0 22px;
+  font-family: var(--font-num);
+  font-size: 15px;
+  color: var(--text-dim);
+}
+
+.finalScore b {
+  display: block;
+  font-size: 26px;
+  color: var(--text);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 22px;
+}
+
+.stat {
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.statValue {
+  margin: 2px 0 0;
+  font-family: var(--font-num);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confettiBit {
+  position: absolute;
+  top: -12vh;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+/* ──────────────────────────── offline strip ────────────────────────────── */
+
+.offlineDots {
+  display: inline-flex;
+  gap: 4px;
+  flex: none;
+}
+
+.offlineDots i {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: currentColor;
+  animation: blink 1.2s ease-in-out infinite;
+}
+.offlineDots i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.offlineDots i:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.offline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent);
+  border-radius: var(--r-md);
+}

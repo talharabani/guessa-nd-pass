@@ -1,0 +1,262 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — the entire visual language lives here.
+
+   The theme reference image lands later; re-skinning means editing this block
+   (and nothing else). Components only ever reference var(--token), never a
+   literal colour, radius, shadow or font.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* surfaces */
+  --bg: #0b0f1a;
+  --bg-glow-1: #1b2a4a;
+  --bg-glow-2: #241b3d;
+  --surface: #141b2d;
+  --surface-2: #1b2438;
+  --surface-3: #232e46;
+  --line: #2c3854;
+  --line-strong: #3b4a6e;
+
+  /* text */
+  --text: #eef2fb;
+  --text-dim: #9aa8c7;
+  --text-faint: #64719238;
+
+  /* brand + roles: the three systems must never look alike */
+  --accent: #6c8cff; /* primary actions */
+  --accent-ink: #0b1024;
+  --select: #a78bfa; /* SELECT board — "choose one for your opponent" */
+  --hunt: #22d3ee; /* GUESS board — "find the number they sent" */
+  --box: #fbbf24; /* YOUR BOXES — the progress you race to fill */
+  --good: #4ade80;
+  --bad: #fb7185;
+
+  /* type */
+  --font-ui: var(--font-display), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num: var(--font-display), 'SF Mono', ui-monospace, monospace;
+
+  /* shape */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-full: 999px;
+
+  /* depth */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --ring: 0 0 0 2px var(--accent), 0 0 0 6px rgba(108, 140, 255, 0.18);
+
+  /* motion — fast enough never to delay a tap */
+  --t-fast: 90ms;
+  --t-mid: 180ms;
+  --t-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --ease-pop: cubic-bezier(0.2, 1.6, 0.4, 1);
+
+  /* layout */
+  --gutter: 16px;
+  --max-w: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(1000px 620px at 12% -12%, var(--bg-glow-1), transparent 62%),
+    radial-gradient(900px 560px at 88% 4%, var(--bg-glow-2), transparent 58%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r-sm);
+}
+
+/* ─────────────────────────────── layout ─────────────────────────────────── */
+
+.shell {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--gutter);
+}
+
+.center-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.muted {
+  color: var(--text-dim);
+}
+
+.tiny {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ───────────────────────────── animations ──────────────────────────────── */
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes drop-in {
+  from {
+    transform: translateY(-18px) scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-7px);
+  }
+  40% {
+    transform: translateX(7px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.42);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(34, 211, 238, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-110%) skewX(-10deg);
+    opacity: 0;
+  }
+  14% {
+    transform: none;
+    opacity: 1;
+  }
+  76% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(110%) skewX(10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes confetti-fall {
+  from {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(104vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

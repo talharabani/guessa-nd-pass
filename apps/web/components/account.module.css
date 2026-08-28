@@ -1,0 +1,108 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 8px 8px 8px 10px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  box-shadow: var(--shadow-1);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--accent-ink);
+  background: linear-gradient(180deg, var(--accent), #4b6ae0);
+  border-radius: var(--r-full);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--text-dim);
+}
+
+.status[data-online='true'] .dot {
+  background: var(--good);
+  box-shadow: 0 0 8px var(--good);
+}
+
+.signOut {
+  flex: none;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition:
+    color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease);
+}
+
+.signOut:hover:not(:disabled) {
+  color: var(--bad);
+  border-color: color-mix(in srgb, var(--bad) 55%, transparent);
+  background: color-mix(in srgb, var(--bad) 10%, transparent);
+}
+
+.signOut:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.signOut:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.confirmTitle {
+  font-size: 21px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}

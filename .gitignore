@@ -1,0 +1,20 @@
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+
+.env
+.env.local
+.env.*.local
+!.env.example
+
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# local dev account store (no Postgres configured)
+apps/server/.data/
+
+coverage/
+.vercel
