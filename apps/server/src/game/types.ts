@@ -71,6 +71,14 @@ export interface PlayerState {
   completedTokens: Token[];
   /** One flag per box; a box can only be filled once. */
   filledBoxes: boolean[];
+  /**
+   * Box indices in the order they were filled.
+   *
+   * filledBoxes alone cannot answer "which ten did they bank most recently",
+   * and that is exactly what a wrong guess has to take away. Kept in step with
+   * filledBoxes by every write below.
+   */
+  fillOrder: number[];
   ready: boolean;
   connected: boolean;
   wantsRematch: boolean;

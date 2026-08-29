@@ -1,9 +1,9 @@
 /**
  * First-run intro.
  *
- * The rule this game runs on — a wrong tap wipes every box you have banked —
- * is not something a player should discover by losing to it. The intro exists
- * to say that once, before the first match.
+ * The rule this game runs on — a wrong tap takes back the last ten boxes you
+ * banked — is not something a player should discover by losing to it. The intro
+ * exists to say that once, before the first match.
  *
  * Per browser, like the theme. Nothing here reaches the server.
  */

@@ -57,10 +57,11 @@ export default function HowToPlayPage() {
         <div className={styles.step}>
           <span className={styles.stepNum}>!</span>
           <div>
-            <div className={styles.stepTitle}>A wrong tap wipes your boxes</div>
+            <div className={styles.stepTitle}>A wrong tap costs you ten boxes</div>
             <p className={styles.stepBody}>
-              The turn does not switch and the tile stays live — but every box you had banked is
-              gone. Nine boxes become zero. Search carefully, not just quickly.
+              The turn does not switch and the tile stays live — but the last ten boxes you banked
+              are taken back. A long run survives a mistake; a short one does not. The tile you
+              guessed is crossed off so you never burn it twice.
             </p>
             <div className={styles.demoRow}>
               <span className={`${styles.demoBox} ${styles.demoBoxFilled}`} />
@@ -69,7 +70,7 @@ export default function HowToPlayPage() {
               <span className={styles.stepBody} style={{ alignSelf: 'center' }}>
                 &nbsp;→&nbsp;
               </span>
-              <span className={styles.demoBox} />
+              <span className={`${styles.demoBox} ${styles.demoBoxFilled}`} />
               <span className={styles.demoBox} />
               <span className={styles.demoBox} />
             </div>

@@ -593,36 +593,35 @@
   gap: 4px;
 }
 
-/* the wrong-guess wipe: ■ → ✕ → □, rippling across the grid */
-.boxesWiping {
-  animation: wipeFlash 0.5s var(--ease);
-}
-
-@keyframes wipeFlash {
-  0%,
-  100% {
-    filter: none;
-  }
-  30% {
-    filter: brightness(1.5) saturate(1.6) hue-rotate(-38deg);
-  }
-}
-
+/*
+ * The wrong-guess take-back.
+ *
+ * Only the boxes actually removed animate. Flashing the whole grid — which is
+ * what this used to do — read as "you lost everything" no matter how many
+ * boxes really went, which is now wrong: the penalty is a fixed handful off the
+ * top of the run, and the animation has to show that size honestly.
+ */
 .boxWipe {
-  animation: boxWipe 0.42s var(--ease) both;
+  animation: boxWipe 0.5s var(--ease) both;
+  z-index: 1;
 }
 
 @keyframes boxWipe {
   0% {
     transform: scale(1);
+    background: var(--box);
+    border-color: transparent;
+    opacity: 1;
   }
-  35% {
-    transform: scale(1.18) rotate(8deg);
+  30% {
+    transform: scale(1.35);
     background: var(--bad);
     border-color: var(--bad);
+    opacity: 1;
   }
   100% {
     transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -634,10 +633,14 @@
   border: 1px dashed var(--line-strong);
   background: var(--bg);
   cursor: not-allowed;
-  transition:
-    transform var(--t-fast) var(--ease),
-    background var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease);
+  /* Stops the browser waiting to see whether a tap is a double-tap-to-zoom. */
+  touch-action: manipulation;
+  /*
+   * Only the press feedback transitions. The FILL is deliberately untransitioned
+   * — a box you just tapped should already be gold on the next frame, and even
+   * 90ms of fade on a control people hammer reads as lag.
+   */
+  transition: transform 60ms var(--ease);
 }
 
 .boxOpen {
@@ -648,7 +651,7 @@
 }
 
 .boxOpen:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
 }
 
 .boxFilled {
@@ -659,7 +662,7 @@
 }
 
 .boxPop {
-  animation: pop-in var(--t-mid) var(--ease-pop);
+  animation: pop-in 160ms var(--ease-pop);
 }
 
 .boxCount {

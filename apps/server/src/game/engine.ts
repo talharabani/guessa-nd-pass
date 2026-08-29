@@ -68,6 +68,7 @@ function newPlayer(
     board,
     completedTokens: [],
     filledBoxes: new Array<boolean>(cfg.boxCount).fill(false),
+    fillOrder: [],
     ready: false,
     connected: true,
     wantsRematch: false,
@@ -88,6 +89,45 @@ export const seatPlayer = (s: GameState, seat: Seat): PlayerState | undefined =>
   s.players.find((p) => p.seat === seat);
 
 export const progressOf = (p: PlayerState): number => p.filledBoxes.filter(Boolean).length;
+
+/** How many boxes a wrong guess takes back. */
+export const WRONG_GUESS_PENALTY = 10;
+
+/**
+ * Empty the most recently filled boxes and report how many actually went.
+ *
+ * Returns fewer than `count` when the player had banked fewer than that — the
+ * penalty can empty a run but never runs into negative progress, so a hunter
+ * sitting on nothing loses nothing and the stat stays honest.
+ */
+function takeBackBoxes(p: PlayerState, count: number): number {
+  let removed = 0;
+
+  while (removed < count) {
+    const index = p.fillOrder.pop();
+    if (index === undefined) break;
+    // Skip anything already empty: the order log can outlive a reset.
+    if (!p.filledBoxes[index]) continue;
+    p.filledBoxes[index] = false;
+    removed++;
+  }
+
+  /*
+   * Fallback for filled boxes with no entry in the order log.
+   *
+   * The log is the only record of *which* boxes were most recent, but it must
+   * never be the record of *how many* are filled — filledBoxes is the truth
+   * there. If the two ever disagree, taking from the end of the grid keeps the
+   * penalty honest instead of silently charging the player nothing.
+   */
+  for (let i = p.filledBoxes.length - 1; i >= 0 && removed < count; i--) {
+    if (!p.filledBoxes[i]) continue;
+    p.filledBoxes[i] = false;
+    removed++;
+  }
+
+  return removed;
+}
 
 /** The spec's state-machine label. PLAYER_2_GUESSING ⇒ P2 searches, P1 fills. */
 export function namedState(s: GameState): NamedState {
@@ -229,12 +269,12 @@ export function guessNumber(
      * WRONG GUESS — the penalty that gives the hunt its weight.
      *
      * The turn does NOT switch and the target stays live: the hunter must keep
-     * searching while their opponent keeps filling. What they lose is their own
-     * progress — every box they had banked is wiped. Boxes are earned as the
-     * selector and destroyed by carelessness as the hunter.
+     * searching while their opponent keeps filling. What they lose is the last
+     * WRONG_GUESS_PENALTY boxes they banked — a real setback that still leaves
+     * the rest of a long run standing, so a single mis-tap late in a close match
+     * is a wound rather than a reset.
      */
-    const boxesLost = progressOf(p);
-    p.filledBoxes.fill(false);
+    const boxesLost = takeBackBoxes(p, WRONG_GUESS_PENALTY);
     p.wrongGuesses++;
     p.boxesLost += boxesLost;
     p.streak = 0;
@@ -312,6 +352,7 @@ export function fillBox(
   if (p.filledBoxes[boxIndex]) return fail('BOX_ALREADY_FILLED', 'That box is already filled.');
 
   p.filledBoxes[boxIndex] = true;
+  p.fillOrder.push(boxIndex);
   const progress = progressOf(p);
   const events = [{ type: 'box_filled', bySeat: p.seat, boxIndex, progress } as const];
 
@@ -362,6 +403,7 @@ export function startRematch(s: GameState): EngineResult {
     p.board = board as Token[];
     p.completedTokens = [];
     p.filledBoxes = new Array<boolean>(s.config.boxCount).fill(false);
+    p.fillOrder = [];
     p.wantsRematch = false;
     p.ready = true;
     p.totalFound = 0;

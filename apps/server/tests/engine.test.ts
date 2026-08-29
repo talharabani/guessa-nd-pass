@@ -18,7 +18,8 @@ import {
   selectNumber,
   setConnected,
   setReady,
-  startRematch
+  startRematch,
+  WRONG_GUESS_PENALTY
 } from '../src/game/engine.js';
 import { snapshotFor } from '../src/game/view.js';
 import { DEFAULT_CONFIG, type GameState, type Seat } from '../src/game/types.js';
@@ -154,13 +155,13 @@ describe('number selection', () => {
 });
 
 describe('guessing', () => {
-  it('a wrong guess keeps the hunt alive but wipes the hunter’s boxes', () => {
+  it('a wrong guess keeps the hunt alive and takes back what the hunter banked', () => {
     const s = playingGame(1);
     const target = seatOf(s, 1).board[0]!;
     selectNumber(s, idOf(s, 1), target);
     const turnBefore = s.turnId;
 
-    // Seat 2 banked boxes on an earlier turn; a mis-tap now costs all of them.
+    // Seat 2 banked fewer than the penalty, so a mis-tap costs all of them.
     seatOf(s, 2).filledBoxes[0] = true;
     seatOf(s, 2).filledBoxes[1] = true;
     seatOf(s, 2).filledBoxes[2] = true;
@@ -184,6 +185,70 @@ describe('guessing', () => {
     expect(canFillBoxes(s, 1)).toBe(true); // opponent keeps filling
     expect(canFillBoxes(s, 2)).toBe(false); // and the hunter still cannot
     expect(seatOf(s, 2).completedTokens).toHaveLength(0);
+  });
+
+  /**
+   * Puts seat 2 in the filler's chair with `banked` boxes on the board, then
+   * hands the turn back so seat 2 is hunting and can mis-tap.
+   *
+   * Roles alternate, so reaching "seat 2 has banked boxes AND is now the
+   * hunter" takes a full round trip: seat 2 has to win the tile to become the
+   * selector, fill, and then lose the role again.
+   */
+  function hunterWithBankedBoxes(banked: number) {
+    const s = playingGame(1);
+    const id1 = idOf(s, 1);
+    const id2 = idOf(s, 2);
+
+    const first = seatOf(s, 1).board[0]!;
+    selectNumber(s, id1, first);
+    guessNumber(s, id2, first); // seat 2 finds it and becomes the selector
+
+    const second = seatOf(s, 2).board.find((n) => n !== first)!;
+    selectNumber(s, id2, second); // now seat 2 is the one filling
+    for (let i = 0; i < banked; i++) fillBox(s, id2, i);
+
+    guessNumber(s, id1, second); // seat 1 finds it and takes the selector role
+    const third = seatOf(s, 1).board.find((n) => n !== first && n !== second)!;
+    selectNumber(s, id1, third); // seat 2 is hunting again, boxes intact
+
+    const wrong = seatOf(s, 2).board.find((n) => n !== third)!;
+    return { s, id2, wrong };
+  }
+
+  it('takes back only the last ten boxes, newest first', () => {
+    const { s, id2, wrong } = hunterWithBankedBoxes(25);
+    expect(progressOf(seatOf(s, 2))).toBe(25);
+
+    const res = guessNumber(s, id2, wrong);
+
+    expect(res.events[0]).toMatchObject({ type: 'wrong_guess', boxesLost: WRONG_GUESS_PENALTY });
+    expect(progressOf(seatOf(s, 2))).toBe(25 - WRONG_GUESS_PENALTY);
+    expect(seatOf(s, 2).boxesLost).toBe(WRONG_GUESS_PENALTY);
+
+    // WHICH ten matters, not just how many: clearing an arbitrary ten would
+    // satisfy the count and still show the player the wrong grid.
+    const filled = seatOf(s, 2).filledBoxes;
+    for (let i = 0; i < 15; i++) expect(filled[i]).toBe(true);
+    for (let i = 15; i < 25; i++) expect(filled[i]).toBe(false);
+  });
+
+  it('charges a second mis-tap only what is left, and never goes below zero', () => {
+    const { s, id2, wrong } = hunterWithBankedBoxes(12);
+
+    guessNumber(s, id2, wrong);
+    expect(progressOf(seatOf(s, 2))).toBe(2);
+
+    // Two left to take, so two is what it costs.
+    const second = guessNumber(s, id2, wrong);
+    expect(second.events[0]).toMatchObject({ type: 'wrong_guess', boxesLost: 2 });
+    expect(progressOf(seatOf(s, 2))).toBe(0);
+    expect(seatOf(s, 2).boxesLost).toBe(WRONG_GUESS_PENALTY + 2);
+
+    // A third costs nothing rather than reporting a negative.
+    const third = guessNumber(s, id2, wrong);
+    expect(third.events[0]).toMatchObject({ type: 'wrong_guess', boxesLost: 0 });
+    expect(progressOf(seatOf(s, 2))).toBe(0);
   });
 
   it('never touches the SELECTOR’s boxes when the hunter guesses wrong', () => {

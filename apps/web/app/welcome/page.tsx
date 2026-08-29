@@ -77,8 +77,8 @@ const SLIDES: Slide[] = [
   },
   {
     key: 'penalty',
-    title: 'A wrong tap wipes them',
-    body: 'Guess wrong and every box you banked is gone. The tile is crossed off so you never burn the same one twice — but the boxes do not come back.',
+    title: 'A wrong tap costs you ten',
+    body: 'Guess wrong and the last ten boxes you banked are taken back. The tile is crossed off so you never burn the same one twice — but those ten do not come back.',
     art: (
       <div className={styles.art}>
         <div className={styles.artRow}>
@@ -87,7 +87,7 @@ const SLIDES: Slide[] = [
           <Tile>5</Tile>
         </div>
         <span className={styles.artCaption} data-tone="bad">
-          9 is ruled out — keep hunting
+          9 ruled out · 10 boxes gone
         </span>
       </div>
     )

@@ -1,4 +1,13 @@
-import { canFillBoxes, canGuess, canSelect, namedState, playerOf, progressOf, seatPlayer } from './engine.js';
+import {
+  canFillBoxes,
+  canGuess,
+  canSelect,
+  namedState,
+  playerOf,
+  progressOf,
+  seatPlayer,
+  WRONG_GUESS_PENALTY
+} from './engine.js';
 import type { ContentType } from './content.js';
 import type { GameState, NamedState, Seat, Token } from './types.js';
 
@@ -51,6 +60,8 @@ export interface GameView {
   turnId: number;
   totalBoxes: number;
   boardSize: number;
+  /** Boxes a wrong guess takes back. The UI states this number in its copy. */
+  wrongGuessPenalty: number;
   /** What the tiles are made of, so the client can size the type to suit. */
   contentType: ContentType;
   countdownSeconds: number;
@@ -102,6 +113,7 @@ export function snapshotFor(s: GameState, userId: string): GameView {
     turnId: s.turnId,
     totalBoxes: s.config.boxCount,
     boardSize: s.config.boardSize,
+    wrongGuessPenalty: WRONG_GUESS_PENALTY,
     contentType: s.config.contentType,
     countdownSeconds: s.config.countdownSeconds,
     isHost: s.hostUserId === userId,

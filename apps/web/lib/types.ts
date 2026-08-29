@@ -65,6 +65,8 @@ export interface GameView {
   turnId: number;
   totalBoxes: number;
   boardSize: number;
+  /** Boxes a wrong guess takes back. Server-owned; the UI only reads it. */
+  wrongGuessPenalty: number;
   contentType: ContentType;
   countdownSeconds: number;
   isHost: boolean;
